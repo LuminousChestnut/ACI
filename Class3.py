@@ -16,16 +16,42 @@ count : 模式匹配后替换的最大次数，默认 0 表示替换所有的匹
 import requests
 import re
 
-url = 'http://www.baidu.com/s?ie=UTF-8&wd=%E5%BE%B7%E5%85%8B%E8%90%A8%E6%96%AF'
-header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+url = 'https://www.baidu.com/s?rtt=1&bsst=1&cl=2&tn=news&ie=utf-8&word=阿里巴巴'
+header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'}
 
-requester = requests.get(url, header).text
+requester = requests.get(url, headers=header).text
 
-list = re.findall('href="(.*?)"', requester)
 # print(requester)
+p_block = '<div class="result(.*?)</div></div>'
+blocklist = re.findall(p_block, requester, re.S)
+print(blocklist)
 
-list[1] = '<em>' + list[1] + '</em>'
-print(list)
+href = []
+title = []
+time = []
+source = []
+
+for i in blocklist:
+    p_href = '<h3 class="news-title_1YtI1 "><a href="(.*?)"'
+    href1 = re.findall(p_href, i, re.S)
+    href.append(href1[0])
+    p_time = '<span class="c-color-gray2">(.*?)'
+    time1 = re.findall(p_time, i, re.S)
+    if time1 == []:
+        time1 = ['无时间来源']
+    time.append(time1[0])
+    p_title = '<h3 class="news-title_1YtI1 ">.*?aria-label="标题：(.*?)"'
+    title1 = re.findall(p_title, i, re.S)
+    title.append(title1[0])
+    p_source = '<span class="c-color-gray" aria-label="新闻来源：(.*?)"'
+    source1 = re.findall(p_source, data, re.S)
+    source.append(source1[0])
+
+for i in range(len(href)):
+    print(str(i+1)+'.'+title[i]+''+source[i])
+    print(href[i])
+
+
 
 def replacer(deletelist, stringlist):
     for string in range(len(stringlist)):
@@ -34,12 +60,12 @@ def replacer(deletelist, stringlist):
             stringlist[string] = re.sub(deletelist[delete], '', stringlist[string])
     return stringlist
 
-#
 # for j in range(len(list)):
 #     list[j] = list[j].strip()
 #     list[j] = re.sub('<em>', '', list[j])
 #     list[j] = re.sub('</em>', '', list[j])
 
-replacer(['<em>', '</em>'], list)
+# replacer(['<em>', '</em>'], list)
+#
+# print(list)
 
-print(list)
