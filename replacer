@@ -1,4 +1,5 @@
-def replacer(string, list):
+def replacer(stringlist, deletelist):
     for i in range(len(list)):
-        string = string.replace(list[i])
-    return string
+        for j in deletelist:
+            stringlist[i] = stringlist[i].replace(j, '')
+    return stringlist
