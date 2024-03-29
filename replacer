@@ -1,0 +1,4 @@
+def replacer(string, list):
+    for i in range(len(list)):
+        string = string.replace(list[i])
+    return string
